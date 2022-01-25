@@ -1,4 +1,6 @@
-from classes import Hardware
+from classes import *
+from classes import Hardware 
+from classes import Moisture
 from classes import TimeKeeper as TK
 import schedule
 import smtplib
@@ -6,9 +8,10 @@ import time
 import ssl
 
 # WATERING_TIME must be in "00:00:00 PM" format
-WATERING_TIME = '11:59:50 AM'
-SECONDS_TO_WATER = 10
+WATERING_TIME = '08:22:40 PM'
+SECONDS_TO_WATER = 5000
 RELAY = Hardware.Relay(12, False)
+moisture = Moisture.Moisture(4,charge_time_limit=0.2,threshold=0.6)
 EMAIL_MESSAGES = {
     'last_watered': {
         'subject': 'Raspberry Pi: Plant Watering Time',
@@ -55,11 +58,17 @@ def water_plant(relay, seconds):
     relay.off()
 
 def main():
+    moisture.wait_for_dry()
     time_keeper = TK.TimeKeeper(TK.TimeKeeper.get_current_time())
-    if(time_keeper.current_time == WATERING_TIME):
-        water_plant(RELAY, SECONDS_TO_WATER)
-        time_keeper.set_time_last_watered(TK.TimeKeeper.get_current_time())
-        print("\nPlant was last watered at {}".format(time_keeper.time_last_watered))
+    print("current time " +  TK.TimeKeeper.get_current_time())
+    water_plant(RELAY, SECONDS_TO_WATER)
+    time_keeper.set_time_last_watered(TK.TimeKeeper.get_current_time())
+    print("\nPlant was last watered at {}".format(time_keeper.time_last_watered))
+    #time_keeper = TK.TimeKeeper(TK.TimeKeeper.get_current_time())
+   # if(time_keeper.current_time == WATERING_TIME):
+    #    water_plant(RELAY, SECONDS_TO_WATER)
+     #   time_keeper.set_time_last_watered(TK.TimeKeeper.get_current_time())
+      #  print("\nPlant was last watered at {}".format(time_keeper.time_last_watered))
         # send_last_watered_email(time_keeper.time_last_watered)
 
 # schedule.every().friday.at("12:00").do(send_check_water_level_email)
@@ -67,4 +76,13 @@ def main():
 while True:
     # schedule.run_pending()
     time.sleep(1)
+    print(moisture.value)
+
+    #for d in moisture.values:
+     #   print(d)
+        # moisture.when_dry = print("dry")
+        # moisture.when_wet = print ("wet")
+      #  moisture.wait_for_wet
+        #print(moisture.wait_for_dry)
+        #time.sleep(2)
     main()
