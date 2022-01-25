@@ -1,8 +1,8 @@
-from classes import *
-from classes import Hardware 
-from classes import Moisture
-from classes import TimeKeeper as TK
-import schedule
+from rasberry_pi import relay
+from rasberry_pi import moisture_sensor
+from run.common import time_keeper as TK
+from rasberry_pi.relay import Relay
+from rasberry_pi.moisture_sensor import Moisture
 import smtplib
 import time
 import ssl
@@ -10,8 +10,8 @@ import ssl
 # WATERING_TIME must be in "00:00:00 PM" format
 WATERING_TIME = '08:22:40 PM'
 SECONDS_TO_WATER = 5000
-RELAY = Hardware.Relay(12, False)
-moisture = Moisture.Moisture(4,charge_time_limit=0.2,threshold=0.6)
+RELAY = Relay(12, False)
+moisture = Moisture(4, charge_time_limit=0.2, threshold=0.6)
 EMAIL_MESSAGES = {
     'last_watered': {
         'subject': 'Raspberry Pi: Plant Watering Time',

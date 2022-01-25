@@ -1,6 +1,6 @@
 import json
 
-import Plan as Plan
+import plan as Plan
 
 
 class MoisturePlan(Plan):
