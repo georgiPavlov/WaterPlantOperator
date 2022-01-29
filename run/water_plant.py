@@ -1,54 +1,14 @@
-from rasberry_pi import relay
-from rasberry_pi import moisture_sensor
 from run.common import time_keeper as TK
-from rasberry_pi.relay import Relay
-from rasberry_pi.moisture_sensor import Moisture
-import smtplib
+from sensor.relay import Relay
+from sensor.moisture_sensor import Moisture
 import time
-import ssl
 
 # WATERING_TIME must be in "00:00:00 PM" format
 WATERING_TIME = '08:22:40 PM'
 SECONDS_TO_WATER = 5000
 RELAY = Relay(12, False)
 moisture = Moisture(4, charge_time_limit=0.2, threshold=0.6)
-EMAIL_MESSAGES = {
-    'last_watered': {
-        'subject': 'Raspberry Pi: Plant Watering Time',
-        'message': 'Your plant was last watered at'
-    },
-    'check_water_level': {
-        'subject': 'Raspberry Pi: Check Water Level',
-        'message': 'Check your water level!',
-    }
-}
 
-def send_email(time_last_watered, subject, message):
-    port = 465
-    smtp_server = "smtp.gmail.com"
-    FROM = TO = "YOUR_EMAIL@gmail.com"
-    password = "YOUR_PASSWORD"
-
-    complete_message = ''
-    if time_last_watered == False:
-        complete_message = "Subject: {}\n\n{}".format(subject, message)
-    else:
-        complete_message = "Subject: {}\n\n{} {}".format(subject, message, time_last_watered)
-    
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(FROM, password)
-        server.sendmail(FROM, TO, complete_message)
-
-def send_last_watered_email(time_last_watered):
-    message = EMAIL_MESSAGES['last_watered']['message']
-    subject = EMAIL_MESSAGES['last_watered']['subject']
-    send_email(time_last_watered, subject, message)
-
-def send_check_water_level_email():
-    message = EMAIL_MESSAGES['check_water_level']['message']
-    subject = EMAIL_MESSAGES['check_water_level']['subject']
-    send_email(False, subject, message)
 
 def water_plant(relay, seconds):
     relay.on()

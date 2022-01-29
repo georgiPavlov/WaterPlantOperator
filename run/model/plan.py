@@ -1,15 +1,15 @@
-import json
+import run.common.json_creator as jc
 
 
-class Plant:
-    def __init__(self, name, type, water_volume):
+class Plan:
+    def __init__(self, name, plan_type, water_volume):
         self.name = name
-        self.type = type
+        self.plan_type = plan_type
         self.water_volume = water_volume
 
     @classmethod
-    def from_json(cls, json_string):
-        json_dict = json.loads(json_string)
+    def from_json(cls, json_string1):
+        json_dict = jc.get_json(json_string1)
         return cls(**json_dict)
 
     def __repr__(self):
@@ -32,6 +32,6 @@ plant_list = []
 with open('data.json', 'r') as json_file:
     user_data = json.loads(json_file.read())
     for u in user_data:
-        plant_list.append(Plant(**u))
+        plant_list.append(Plan(**u))
 
 print(plant_list)

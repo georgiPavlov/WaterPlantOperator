@@ -1,10 +1,11 @@
 import datetime
 
+
 class TimeKeeper:
     def __init__(self, current_time):
         self.current_time = current_time
         self.time_last_watered = None
-    
+
     def set_current_time(self, updated_time):
         self.current_time = updated_time
 
@@ -14,4 +15,11 @@ class TimeKeeper:
     @staticmethod
     def get_current_time():
         now = datetime.datetime.now()
-        return now.strftime("%I:%M:%S %p")
+        return now.strftime("%I:%M %p")
+
+    @staticmethod
+    def get_current_time_with_delta(delta):
+        now = datetime.datetime.now()
+        time_change = datetime.timedelta(minutes=delta)
+        time_with_delta = now + time_change
+        return time_with_delta.strftime("%I:%M %p")
