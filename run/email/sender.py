@@ -22,7 +22,6 @@ class Sender:
         FROM = TO = "YOUR_EMAIL@gmail.com"
         password = "YOUR_PASSWORD"
 
-        complete_message = ''
         if not time_last_watered:
             complete_message = "Subject: {}\n\n{}".format(subject, message)
         else:
