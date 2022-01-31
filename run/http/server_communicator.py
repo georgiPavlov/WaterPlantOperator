@@ -22,6 +22,10 @@ class IServerCommunicatorInterface:
     #postPicture
     def post_picture(self):
         pass
+    
+    #postPlanExecution
+    def post_plan_execution(self, status):
+        pass
 
 
 class ServerCommunicator(IServerCommunicatorInterface):
@@ -29,16 +33,18 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_WATER_URL = 'postWater'
     POST_MOISTURE_URL = 'postMoisture'
     POST_PICTURE = 'postPicture'
+    POST_STATUS = 'postStatus'
     IMAGE_PATH = '/tmp/image.png'
-    DEVICE_GUID = 'ab313658-5d84-47d6-a3f1-b609c0f1dd5e'
     PROTOCOL = 'http'
+    #device_guid = 'ab313658-5d84-47d6-a3f1-b609c0f1dd5e'
 
-    def __init__(self):
+    def __init__(self, device_guid):
+        self.device_guid = device_guid
         IServerCommunicatorInterface.__init__(self)
 
     def get_plan(self):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.GET_PLAN_URL)
-        device_json = {'device': self.DEVICE_GUID}
+        device_json = {'device': self.device_guid}
         response = None
         try:
             response = requests.get(request_url, params=device_json)
@@ -59,7 +65,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
 
     def post_water(self, water_level):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_WATER_URL)
-        device_json = {'device': self.DEVICE_GUID, 'water_level': water_level}
+        device_json = {'device': self.device_guid, 'water_level': water_level}
         response = None
         try:
             response = requests.post(request_url, data=device_json)
@@ -78,7 +84,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
 
     def post_moisture(self, moisture_level):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_MOISTURE_URL)
-        device_json = {'device': self.DEVICE_GUID, 'moisture_level': moisture_level}
+        device_json = {'device': self.device_guid, 'moisture_level': moisture_level}
         response = None
         try:
             response = requests.post(request_url, data=device_json)
@@ -108,6 +114,25 @@ class ServerCommunicator(IServerCommunicatorInterface):
             print(data)
         except requests.exceptions.RequestException:
             print(response.text)
+            
+    def post_plan_execution(self, status):
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_STATUS)
+        device_json = {'device': self.device_guid, 'execution_status': status.execution_status, 'message': status.message}
+        response = None
+        try:
+            response = requests.post(request_url, data=device_json)
+            print(response.url)
+            if response.status_code == HTTPStatus.FORBIDDEN:
+                print(f'Device not registered: {response.status_code}')
+            elif response.status_code == HTTPStatus.CREATED:
+                print(f'Status posted: {response.status_code}')
+                json_response = response.json()
+                return json_response
+            else:
+                print(f'response: {response.status_code}')
+        except requests.exceptions.RequestException:
+            print(response.text)
+        return self.return_emply_json()
 
     # to do revert to constant usage when using real ip address
     def get_ip_address(self):
