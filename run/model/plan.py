@@ -1,3 +1,4 @@
+import logging
 import run.common.json_creator as jc
 
 
@@ -34,4 +35,4 @@ with open('data.json', 'r') as json_file:
     for u in user_data:
         plant_list.append(Plan(**u))
 
-print(plant_list)
+logging.info(plant_list)

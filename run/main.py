@@ -1,48 +1,33 @@
-from run.common import time_keeper as TK
-from sensor.relay import Relay
-from sensor.moisture_sensor import Moisture
-import time
+import logging
+from run.sensor.relay import Relay
+from run.sensor.moisture_sensor import Moisture
+from run.http.server_communicator import ServerCommunicator
+from run.operation.pump import Pump
+from run.operation.server_checker import ServerChecker
 
-# WATERING_TIME must be in "00:00:00 PM" format
-WATERING_TIME = '08:22:40 PM'
-SECONDS_TO_WATER = 5000
-RELAY = Relay(12, False)
-moisture = Moisture(4, charge_time_limit=0.2, threshold=0.6)
+WATER_PUMPED_IN_SECOND = 10
+MOISTURE_MAX_LEVEL = 0
+WATER_TIME_BETWEEN_CYCLE = 10
+WATER_MAX_CAPACITY = 2000
+MOISTURE_PIN = 4
+RELAY_PIN = 12
+DEVICE_GUID = 'ab313658-5d84-47d6-a3f1-b609c0f1dd5e'
 
-
-def water_plant(relay, seconds):
-    relay.on()
-    print("Plant is being watered!")
-    time.sleep(seconds)
-    print("Watering is finished!")
-    relay.off()
 
 def main():
-    moisture.wait_for_dry()
-    time_keeper = TK.TimeKeeper(TK.TimeKeeper.get_current_time())
-    print("current time " +  TK.TimeKeeper.get_current_time())
-    water_plant(RELAY, SECONDS_TO_WATER)
-    time_keeper.set_time_last_watered(TK.TimeKeeper.get_current_time())
-    print("\nPlant was last watered at {}".format(time_keeper.time_last_watered))
-    #time_keeper = TK.TimeKeeper(TK.TimeKeeper.get_current_time())
-   # if(time_keeper.current_time == WATERING_TIME):
-    #    water_plant(RELAY, SECONDS_TO_WATER)
-     #   time_keeper.set_time_last_watered(TK.TimeKeeper.get_current_time())
-      #  print("\nPlant was last watered at {}".format(time_keeper.time_last_watered))
-        # send_last_watered_email(time_keeper.time_last_watered)
+    # logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
+    logging.info("Starting....")
+    relay = Relay(RELAY_PIN, active_high=False)
+    moisture = Moisture(MOISTURE_PIN, charge_time_limit=0.2, threshold=0.6)
 
-# schedule.every().friday.at("12:00").do(send_check_water_level_email)
+    pump = Pump(water_max_capacity=WATER_MAX_CAPACITY, water_pumped_in_second=WATER_PUMPED_IN_SECOND,
+                moisture_max_level=MOISTURE_MAX_LEVEL)
+    sever_communicator = ServerCommunicator(device_guid=DEVICE_GUID)
+    server_checker = ServerChecker(pump=pump, communicator=sever_communicator,
+                                   wait_time_between_cycle=WATER_TIME_BETWEEN_CYCLE)
+    logging.info("executor starting..")
+    server_checker.plan_executor(**{pump.RELAY_SENSOR_KEY: relay, pump.MOISTURE_SENSOR_KEY: moisture})
+    logging.info("end")
 
-while True:
-    # schedule.run_pending()
-    time.sleep(1)
-    print(moisture.value)
 
-    #for d in moisture.values:
-     #   print(d)
-        # moisture.when_dry = print("dry")
-        # moisture.when_wet = print ("wet")
-      #  moisture.wait_for_wet
-        #print(moisture.wait_for_dry)
-        #time.sleep(2)
-    main()
+main()

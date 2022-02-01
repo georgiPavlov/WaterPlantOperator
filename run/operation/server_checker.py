@@ -1,21 +1,20 @@
-import run.operation.pump as p
-import run.http.server_communicator as com
+import logging
 from time import sleep
 
 
 class IServerCheckerInterface:
 
-    def check_for_new_plan(self, **sensors):
+    def plan_executor(self, **sensors):
         pass
 
-    def send_result(self):
+    def send_result(self, moisture_level, status, water_level):
         pass
 
     def show(self):
         raise Exception("NotImplementedException")
 
 
-class ServerCheckerInterface(IServerCheckerInterface):
+class ServerChecker(IServerCheckerInterface):
 
     def __init__(self, pump, communicator, wait_time_between_cycle):
         self.pump = pump
@@ -23,7 +22,7 @@ class ServerCheckerInterface(IServerCheckerInterface):
         self.wait_time_between_cycle = wait_time_between_cycle
         IServerCheckerInterface.__init__(self)
 
-    def check_for_new_plan(self, **sensors):
+    def plan_executor(self, **sensors):
         while True:
             try:
                 plan = self.communicator.get_plan()
@@ -34,12 +33,14 @@ class ServerCheckerInterface(IServerCheckerInterface):
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
                 moisture_level = self.pump.get_moisture_level_in_percent()
-                self.communicator.post_plan_execution(status)
-                self.communicator.post_water(water_level)
-                self.communicator.post_moisture(moisture_level)
-                # self.communicator.post_picture(picture)
-
+                self.send_result(moisture_level, status, water_level)
                 sleep(self.wait_time_between_cycle)
-                print('Executed watering loop')
+                logging.info('Executed watering loop')
             except Exception as e:
-                print('[Exception]' + str(e))
+                logging.info('[Exception]' + str(e))
+
+    def send_result(self, moisture_level, status, water_level):
+        self.communicator.post_plan_execution(status)
+        self.communicator.post_water(water_level)
+        self.communicator.post_moisture(moisture_level)
+        # self.communicator.post_picture(picture)

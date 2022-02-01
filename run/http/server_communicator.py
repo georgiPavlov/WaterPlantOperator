@@ -1,4 +1,5 @@
 import socket
+import logging
 from http import HTTPStatus
 import requests
 import run.common.json_creator as jc
@@ -36,7 +37,6 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_STATUS = 'postStatus'
     IMAGE_PATH = '/tmp/image.png'
     PROTOCOL = 'http'
-    #device_guid = 'ab313658-5d84-47d6-a3f1-b609c0f1dd5e'
 
     def __init__(self, device_guid):
         self.device_guid = device_guid
@@ -48,19 +48,19 @@ class ServerCommunicator(IServerCommunicatorInterface):
         response = None
         try:
             response = requests.get(request_url, params=device_json)
-            print(response.url)
+            logging.info(response.url)
             if response.status_code == HTTPStatus.NO_CONTENT:
-                print(f'No new plan in queue: {response.status_code}')
+                logging.info(f'No new plan in queue: {response.status_code}')
             elif response.status_code == HTTPStatus.FORBIDDEN:
-                print(f'Device not registered: {response.status_code}')
+                logging.info(f'Device not registered: {response.status_code}')
             elif response.status_code == HTTPStatus.OK:
-                print(f'New plan found: {response.status_code}')
+                logging.info(f'New plan found: {response.status_code}')
                 json_response = response.json()
                 return json_response
             else:
-                print(f'response: {response.status_code}')
+                logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException:
-            print(response.text)
+            logging.info(response.text)
         return self.return_emply_json()
 
     def post_water(self, water_level):
@@ -69,17 +69,17 @@ class ServerCommunicator(IServerCommunicatorInterface):
         response = None
         try:
             response = requests.post(request_url, data=device_json)
-            print(response.url)
+            logging.info(response.url)
             if response.status_code == HTTPStatus.FORBIDDEN:
-                print(f'Device not registered: {response.status_code}')
+                logging.info(f'Device not registered: {response.status_code}')
             elif response.status_code == HTTPStatus.CREATED:
-                print(f'Water posted: {response.status_code}')
+                logging.info(f'Water posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
             else:
-                print(f'response: {response.status_code}')
+                logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException:
-            print(response.text)
+            logging.info(response.text)
         return self.return_emply_json()
 
     def post_moisture(self, moisture_level):
@@ -88,17 +88,17 @@ class ServerCommunicator(IServerCommunicatorInterface):
         response = None
         try:
             response = requests.post(request_url, data=device_json)
-            print(response.url)
+            logging.info(response.url)
             if response.status_code == HTTPStatus.FORBIDDEN:
-                print(f'Device not registered: {response.status_code}')
+                logging.info(f'Device not registered: {response.status_code}')
             elif response.status_code == HTTPStatus.CREATED:
-                print(f'Moisture level posted: {response.status_code}')
+                logging.info(f'Moisture level posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
             else:
-                print(f'response: {response.status_code}')
+                logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException:
-            print(response.text)
+            logging.info(response.text)
         return self.return_emply_json()
 
     def post_picture(self):
@@ -111,9 +111,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
         try:
             response = requests.post(request_url, data=payload, headers=headers)
             data = response.json()
-            print(data)
+            logging.info(data)
         except requests.exceptions.RequestException:
-            print(response.text)
+            logging.info(response.text)
             
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_STATUS)
@@ -121,17 +121,17 @@ class ServerCommunicator(IServerCommunicatorInterface):
         response = None
         try:
             response = requests.post(request_url, data=device_json)
-            print(response.url)
+            logging.info(response.url)
             if response.status_code == HTTPStatus.FORBIDDEN:
-                print(f'Device not registered: {response.status_code}')
+                logging.info(f'Device not registered: {response.status_code}')
             elif response.status_code == HTTPStatus.CREATED:
-                print(f'Status posted: {response.status_code}')
+                logging.info(f'Status posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
             else:
-                print(f'response: {response.status_code}')
+                logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException:
-            print(response.text)
+            logging.info(response.text)
         return self.return_emply_json()
 
     # to do revert to constant usage when using real ip address
@@ -139,13 +139,13 @@ class ServerCommunicator(IServerCommunicatorInterface):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         ip_address = s.getsockname()[0]
-        print(f'ip address: {ip_address}')
+        logging.info(f'ip address: {ip_address}')
         s.close()
         return ip_address
 
     def build_ulr_for_request(self, protocol, ip, request_url):
         url_address = f'{protocol}://{ip}/{request_url}'
-        print(f'url_address: {url_address}')
+        logging.info(f'url_address: {url_address}')
         return url_address
 
     def return_emply_json(self):
