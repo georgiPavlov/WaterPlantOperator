@@ -27,7 +27,9 @@ class ServerChecker(IServerCheckerInterface):
             try:
                 plan = self.communicator.get_plan()
                 running_plan = self.pump.get_running_plan()
+                print(f'Running plan: {running_plan}')
                 if plan == self.communicator.return_emply_json() or running_plan is None:
+                    print(f'No new plan for execution found: {running_plan}')
                     continue
 
                 status = self.pump.execute_water_plan(plan, **sensors)
