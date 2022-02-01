@@ -37,6 +37,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_STATUS = 'postStatus'
     IMAGE_PATH = '/tmp/image.png'
     PROTOCOL = 'http'
+    PORT = '8080'
 
     def __init__(self, device_guid):
         self.device_guid = device_guid
@@ -154,7 +155,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return ip_address
 
     def build_ulr_for_request(self, protocol, ip, request_url):
-        url_address = f'{protocol}://{ip}/{request_url}'
+        url_address = f'{protocol}://{ip}:{self.PORT}/{request_url}'
         logging.info(f'url_address: {url_address}')
         return url_address
 
