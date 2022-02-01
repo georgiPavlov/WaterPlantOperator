@@ -143,7 +143,7 @@ class Pump(IPumpInterface):
     def get_time(self):
         time_k = tk.TimeKeeper(tk.TimeKeeper.get_current_time())
         logging.info(f'init current time at: {time_k.get_current_time()}')
-        return time_k.get_current_time()
+        return time_k
 
     def reset_water_level(self):
         logging.info(f'reseting water: current water level: {self.water_level}')
