@@ -60,9 +60,14 @@ class ServerCommunicator(IServerCommunicatorInterface):
                 return json_response
             else:
                 logging.info(f'response: {response.status_code}')
-        except requests.exceptions.RequestException:
-            logging.info(response.text)
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
         return self.return_emply_json()
+
+    def print_respose(self, response):
+        if response is not None:
+            logging.info(response.text)
 
     def post_water(self, water_level):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_WATER_URL)
@@ -79,8 +84,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
                 return json_response
             else:
                 logging.info(f'response: {response.status_code}')
-        except requests.exceptions.RequestException:
-            logging.info(response)
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
         return self.return_emply_json()
 
     def post_moisture(self, moisture_level):
@@ -100,6 +106,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
                 logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException as e:
             logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
         return self.return_emply_json()
 
     def post_picture(self):
@@ -113,8 +120,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
             response = requests.post(request_url, data=payload, headers=headers)
             data = response.json()
             logging.info(data)
-        except requests.exceptions.RequestException:
-            logging.info(response.text)
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
             
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)
@@ -131,8 +139,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
                 return json_response
             else:
                 logging.info(f'response: {response.status_code}')
-        except requests.exceptions.RequestException:
-            logging.info(response.text)
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
         return self.return_emply_json()
 
     # to do revert to constant usage when using real ip address
