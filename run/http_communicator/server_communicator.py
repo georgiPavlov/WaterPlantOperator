@@ -36,14 +36,15 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_PICTURE = 'postPicture'
     POST_STATUS = 'postStatus'
     IMAGE_PATH = '/tmp/image.png'
-    PROTOCOL = 'http_communicator'
+    PROTOCOL = 'http'
 
     def __init__(self, device_guid):
         self.device_guid = device_guid
+        self.water_server_ip = self.get_ip_address()
         IServerCommunicatorInterface.__init__(self)
 
     def get_plan(self):
-        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.GET_PLAN_URL)
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.GET_PLAN_URL)
         device_json = {'device': self.device_guid}
         response = None
         try:
@@ -64,7 +65,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return self.return_emply_json()
 
     def post_water(self, water_level):
-        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_WATER_URL)
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_WATER_URL)
         device_json = {'device': self.device_guid, 'water_level': water_level}
         response = None
         try:
@@ -83,7 +84,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return self.return_emply_json()
 
     def post_moisture(self, moisture_level):
-        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_MOISTURE_URL)
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_MOISTURE_URL)
         device_json = {'device': self.device_guid, 'moisture_level': moisture_level}
         response = None
         try:
@@ -102,7 +103,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return self.return_emply_json()
 
     def post_picture(self):
-        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_PICTURE)
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_PICTURE)
         base64_image = f.return_file_content_in_base64_format(self.IMAGE_PATH)
 
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -116,7 +117,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
             logging.info(response.text)
             
     def post_plan_execution(self, status):
-        request_url = self.build_ulr_for_request(self.PROTOCOL, self.get_ip_address, self.POST_STATUS)
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)
         device_json = {'device': self.device_guid, 'execution_status': status.execution_status, 'message': status.message}
         response = None
         try:
