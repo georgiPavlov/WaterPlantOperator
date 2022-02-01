@@ -28,9 +28,11 @@ class ServerChecker(IServerCheckerInterface):
                 plan = self.communicator.get_plan()
                 running_plan = self.pump.get_running_plan()
                 logging.info(f'Running plan: {running_plan}')
-                if plan == self.communicator.return_emply_json() or running_plan is None:
+                if plan == self.communicator.return_emply_json():
                     logging.info(f'No new plan for execution found: {running_plan}')
-                    continue
+                    if running_plan is None:
+                        logging.info('running plan for found')
+                        continue
 
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
