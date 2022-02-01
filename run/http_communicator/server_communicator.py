@@ -80,7 +80,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
             else:
                 logging.info(f'response: {response.status_code}')
         except requests.exceptions.RequestException:
-            logging.info(response.text)
+            logging.info(response)
         return self.return_emply_json()
 
     def post_moisture(self, moisture_level):
@@ -98,8 +98,8 @@ class ServerCommunicator(IServerCommunicatorInterface):
                 return json_response
             else:
                 logging.info(f'response: {response.status_code}')
-        except requests.exceptions.RequestException:
-            logging.info(response.text)
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
         return self.return_emply_json()
 
     def post_picture(self):
