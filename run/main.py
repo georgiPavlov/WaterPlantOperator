@@ -1,7 +1,7 @@
 import logging
 from run.sensor.relay import Relay
 from run.sensor.moisture_sensor import Moisture
-from run.http.server_communicator import ServerCommunicator
+from run.http_communicator.server_communicator import ServerCommunicator
 from run.operation.pump import Pump
 from run.operation.server_checker import ServerChecker
 
@@ -30,4 +30,5 @@ def main():
     logging.info("end")
 
 
+# program starter
 main()

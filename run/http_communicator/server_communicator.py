@@ -1,6 +1,6 @@
 import socket
 import logging
-from http import HTTPStatus
+import http as h
 import requests
 import run.common.json_creator as jc
 import run.common.file as f
@@ -12,7 +12,7 @@ class IServerCommunicatorInterface:
     def get_plan(self):
         pass
 
-    #postWater
+    #postWaterpip index versions
     def post_water(self, water):
         pass
 
@@ -36,7 +36,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_PICTURE = 'postPicture'
     POST_STATUS = 'postStatus'
     IMAGE_PATH = '/tmp/image.png'
-    PROTOCOL = 'http'
+    PROTOCOL = 'http_communicator'
 
     def __init__(self, device_guid):
         self.device_guid = device_guid
@@ -49,11 +49,11 @@ class ServerCommunicator(IServerCommunicatorInterface):
         try:
             response = requests.get(request_url, params=device_json)
             logging.info(response.url)
-            if response.status_code == HTTPStatus.NO_CONTENT:
+            if response.status_code == h.HTTPStatus.NO_CONTENT:
                 logging.info(f'No new plan in queue: {response.status_code}')
-            elif response.status_code == HTTPStatus.FORBIDDEN:
+            elif response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
-            elif response.status_code == HTTPStatus.OK:
+            elif response.status_code == h.HTTPStatus.OK:
                 logging.info(f'New plan found: {response.status_code}')
                 json_response = response.json()
                 return json_response
@@ -70,9 +70,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
         try:
             response = requests.post(request_url, data=device_json)
             logging.info(response.url)
-            if response.status_code == HTTPStatus.FORBIDDEN:
+            if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
-            elif response.status_code == HTTPStatus.CREATED:
+            elif response.status_code == h.HTTPStatus.CREATED:
                 logging.info(f'Water posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
@@ -89,9 +89,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
         try:
             response = requests.post(request_url, data=device_json)
             logging.info(response.url)
-            if response.status_code == HTTPStatus.FORBIDDEN:
+            if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
-            elif response.status_code == HTTPStatus.CREATED:
+            elif response.status_code == h.HTTPStatus.CREATED:
                 logging.info(f'Moisture level posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
@@ -122,9 +122,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
         try:
             response = requests.post(request_url, data=device_json)
             logging.info(response.url)
-            if response.status_code == HTTPStatus.FORBIDDEN:
+            if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
-            elif response.status_code == HTTPStatus.CREATED:
+            elif response.status_code == h.HTTPStatus.CREATED:
                 logging.info(f'Status posted: {response.status_code}')
                 json_response = response.json()
                 return json_response
