@@ -65,6 +65,7 @@ class Pump(IPumpInterface):
         if plan_type == self.WATER_PLAN_BASIC:
             logging.info(f'option: {self.WATER_PLAN_BASIC}')
             json_string = j.dump_json(plan)
+            logging.info(f'json_string {json_string}')
             plan_obj = p.Plan.from_json(json_string)
             is_watering_successful = self.water_plant(relay, plan_obj.water_volume)
             if is_watering_successful:
