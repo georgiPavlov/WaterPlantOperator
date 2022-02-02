@@ -58,7 +58,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
             elif response.status_code == h.HTTPStatus.OK:
                 logging.info(f'New plan found: {response.status_code}')
                 json_response = response.json()
-                logging.info(json_response)
+                logging.info(f'Response: {json_response}')
                 return json_response
             else:
                 logging.info(f'response: {response.status_code}')
