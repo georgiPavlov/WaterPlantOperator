@@ -61,6 +61,7 @@ class Pump(IPumpInterface):
         logging.info(plan)
         plan_type = plan[self.PLAN_TYPE_KEY]
         relay = sensors.get(self.RELAY_SENSOR_KEY)
+        logging.info('plan_type')
         if plan_type == self.WATER_PLAN_BASIC:
             logging.info(f'option: {self.WATER_PLAN_BASIC}')
             plan_obj = p.Plan.from_json(j.dump_json(plan))
