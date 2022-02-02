@@ -20,4 +20,4 @@ class Plan:
 json_string = '''{"name": "plant1", "plan_type": "basic", "water_volume": "200ml"}'''
 
 plan_t = Plan.from_json(json_string)
-print(plan_t.plan_type)
+logging.info(plan_t.plan_type)

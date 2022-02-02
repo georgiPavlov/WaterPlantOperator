@@ -58,7 +58,7 @@ class Pump(IPumpInterface):
         self.watering_status = None
 
     def execute_water_plan(self, plan, **sensors):
-        print(plan)
+        logging.info(plan)
         plan_type = plan[self.PLAN_TYPE_KEY]
         relay = sensors.get(self.RELAY_SENSOR_KEY)
         if plan_type == self.WATER_PLAN_BASIC:
