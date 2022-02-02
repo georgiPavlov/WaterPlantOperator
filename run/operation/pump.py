@@ -4,6 +4,10 @@ from datetime import date
 import calendar
 from run.common import time_keeper as tk
 import run.model.status as s
+import run.model.plan as p
+import run.model.moisture_plan as m
+import run.model.time_plan as t
+import run.common.json_creator as j
 
 
 class IPumpInterface:
@@ -40,6 +44,7 @@ class Pump(IPumpInterface):
     DELETE_RUNNING_PLAN = 'delete'
     RELAY_SENSOR_KEY = 'relay'
     MOISTURE_SENSOR_KEY = 'moisture_sensor'
+    PLAN_TYPE_KEY = 'plan_type'
 
     def __init__(self, water_max_capacity, water_pumped_in_second, moisture_max_level):
         IPumpInterface.__init__(self)
@@ -53,22 +58,26 @@ class Pump(IPumpInterface):
         self.watering_status = None
 
     def execute_water_plan(self, plan, **sensors):
-        plan_type = plan.plan_type
+        print(plan)
+        plan_type = plan[self.PLAN_TYPE_KEY]
         relay = sensors.get(self.RELAY_SENSOR_KEY)
         if plan_type == self.WATER_PLAN_BASIC:
             logging.info(f'option: {self.WATER_PLAN_BASIC}')
-            is_watering_successful = self.water_plant(relay, plan.water_volume)
+            plan_obj = p.Plan.from_json(j.dump_json(plan))
+            is_watering_successful = self.water_plant(relay, plan_obj.water_volume)
             if is_watering_successful:
                 self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
             else:
                 self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_BASIC_PLAN_SUCCESS}')
         elif plan_type == self.WATER_PLAN_MOISTURE:
-            self.running_plan = plan
+            plan_obj = m.MoisturePlan.from_json(j.dump_json(plan))
+            self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_MOISTURE}')
             moisture_sensor = sensors.get(self.MOISTURE_SENSOR_KEY)
             self.water_plant_by_moisture(relay, moisture_sensor, self.running_plan)
         elif plan_type == self.WATER_PLAN_TIME:
-            self.running_plan = plan
+            plan_obj = t.TimePlan.from_json(j.dump_json(plan))
+            self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_TIME}')
             self.water_plant_by_timer(relay, self.running_plan)
         elif plan_type == self.DELETE_RUNNING_PLAN:

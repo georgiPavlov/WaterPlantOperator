@@ -17,22 +17,7 @@ class Plan:
         return f'<name {self.name}>'
 
 
+json_string = '''{"name": "plant1", "plan_type": "basic", "water_volume": "200ml"}'''
 
-
-
-
-
-
-json_string = '''{
-    "name": "plant1",
-    "type": "basic",
-    "water_volum": "200ml",
-}'''
-
-plant_list = []
-with open('data.json', 'r') as json_file:
-    user_data = json.loads(json_file.read())
-    for u in user_data:
-        plant_list.append(Plan(**u))
-
-logging.info(plant_list)
+plan_t = Plan.from_json(json_string)
+print(plan_t.plan_type)
