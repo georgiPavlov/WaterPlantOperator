@@ -128,7 +128,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
             
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)
-        device_json = {'device': self.device_guid, 'execution_status': status.execution_status, 'message': status.message}
+        device_json = {'device': self.device_guid, 'execution_status': status.watering_status, 'message': status.message}
         response = None
         try:
             response = requests.post(request_url, data=device_json)
