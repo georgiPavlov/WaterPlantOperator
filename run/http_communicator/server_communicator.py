@@ -73,10 +73,11 @@ class ServerCommunicator(IServerCommunicatorInterface):
 
     def post_water(self, water_level):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_WATER_URL)
-        device_json = {'device': self.device_guid, 'water_level': water_level}
+        payload = {'device': self.device_guid, 'water_level': water_level}
+        headers = {"Content-Type": "application/json"}
         response = None
         try:
-            response = requests.post(request_url, data=device_json)
+            response = requests.request("POST", request_url, json=payload, headers=headers)
             logging.info(response.url)
             if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')

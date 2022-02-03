@@ -35,9 +35,7 @@ class ServerChecker(IServerCheckerInterface):
                         continue
                 logging.info(f'Getting status: {running_plan}')
                 status = self.pump.execute_water_plan(plan, **sensors)
-                logging.info(f'Sending water level: {running_plan}')
                 water_level = self.pump.get_water_level_in_percent()
-                logging.info(f'Sending moisture level: {running_plan}')
                 moisture_level = self.pump.get_moisture_level_in_percent()
                 self.send_result(moisture_level, status, water_level)
                 sleep(self.wait_time_between_cycle)
