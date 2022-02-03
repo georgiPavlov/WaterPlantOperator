@@ -15,7 +15,8 @@ DEVICE_GUID = 'ab313658-5d84-47d6-a3f1-b609c0f1dd5e'
 
 
 def main():
-    logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
+    logging.root.handlers = []
+    logging.basicConfig(filename='/tmp/example.log', filemode='w', level=logging.DEBUG)
     logging.getLogger().setLevel(logging.INFO)
     logging.info("Starting....")
     relay = Relay(RELAY_PIN, active_high=False)

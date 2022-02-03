@@ -18,8 +18,8 @@ class TimeKeeper:
         return now.strftime("%I:%M %p")
 
     @staticmethod
-    def get_current_time_with_delta(delta):
+    def get_current_time_minus_delta(delta):
         now = datetime.datetime.now()
         time_change = datetime.timedelta(minutes=delta)
-        time_with_delta = now + time_change
+        time_with_delta = now - time_change
         return time_with_delta.strftime("%I:%M %p")

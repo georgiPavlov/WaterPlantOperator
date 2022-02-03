@@ -85,6 +85,7 @@ class Pump(IPumpInterface):
             self.water_plant_by_timer(relay, self.running_plan)
         elif plan_type == self.DELETE_RUNNING_PLAN:
             self.running_plan = None
+            self.water_time = None
             logging.info(f'option: {self.DELETE_RUNNING_PLAN}')
             self.watering_status = s.Status(watering_status=False, message=s.MESSAGE_DELETED_PLAN)
         else:
@@ -108,10 +109,14 @@ class Pump(IPumpInterface):
     def water_plant_by_moisture(self, relay, moisture_sensor, moisture_plan):
         check_int = moisture_plan.check_interval
         logging.info(f'check_int: {check_int}')
-        current_time_with_delta = self.get_time().get_current_time_with_delta(check_int)
-        logging.info(f'current_time: {current_time_with_delta}')
-        if self.water_time.time_last_watered != current_time_with_delta:
-            message = f'current time is: {current_time_with_delta} and water time is {self.water_time}'
+        current_time_minus_delta = self.get_time().get_current_time_minus_delta(check_int)
+        logging.info(f'current_time minus delta: {current_time_minus_delta}')
+        if self.water_time is None:
+            self.water_time = self.get_time()
+            self.water_time.set_time_last_watered(current_time_minus_delta)
+
+        if self.water_time.time_last_watered != current_time_minus_delta:
+            message = f'current time minus delta is: {current_time_minus_delta} and water time is {self.water_time.time_last_watered}'
             logging.info(message)
             self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_PLAN_CONDITION_NOT_MET}')
             return
