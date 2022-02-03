@@ -111,7 +111,9 @@ class Pump(IPumpInterface):
         logging.info(f'check_int: {check_int}')
         current_time_minus_delta = self.get_time().get_current_time_minus_delta(check_int)
         logging.info(f'current_time minus delta: {current_time_minus_delta}')
-        if self.water_time is None:
+        self.set_watered_time_if_none(current_time_minus_delta)
+        is_water_time_of_range = self.if_water_time_out_of_range(check_int)
+        if is_water_time_of_range:
             self.water_time = self.get_time()
             self.water_time.set_time_last_watered(current_time_minus_delta)
 
@@ -136,6 +138,20 @@ class Pump(IPumpInterface):
             return
         self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_PLAN_CONDITION_NOT_MET}')
         logging.info('returning only moisture')
+
+    def set_watered_time_if_none(self, current_time_minus_delta):
+        if self.water_time is None:
+            self.water_time = self.get_time()
+            self.water_time.set_time_last_watered(current_time_minus_delta)
+
+    def if_water_time_out_of_range(self, check_int):
+        out_of_range_delta = check_int * 2
+        out_of_range_time = self.get_time().get_current_time_minus_delta(out_of_range_delta)
+        if self.water_time.time_last_watered > out_of_range_time:
+            logging.info(
+                f'Time {self.water_time.time_last_watered} is out of range because it is bigger than {out_of_range_time}')
+            return True
+        return False
 
     def water_plant_by_timer(self, relay, time_plan):
         timer = time_plan.timer
@@ -184,4 +200,3 @@ class Pump(IPumpInterface):
 
     def get_running_plan(self):
         return self.running_plan
-

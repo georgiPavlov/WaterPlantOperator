@@ -1,5 +1,6 @@
 import logging
 from time import sleep
+import run.model.status as st
 
 
 class IServerCheckerInterface:
@@ -31,7 +32,7 @@ class ServerChecker(IServerCheckerInterface):
                 if plan == self.communicator.return_emply_json():
                     logging.info(f'No new plan for execution found: {running_plan}')
                     if running_plan is None:
-                        logging.info('running plan for found')
+                        logging.info('running plan not found')
                         continue
                 logging.info(f'Getting status: {running_plan}')
                 status = self.pump.execute_water_plan(plan, **sensors)
