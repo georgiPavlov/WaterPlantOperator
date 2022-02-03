@@ -94,10 +94,11 @@ class ServerCommunicator(IServerCommunicatorInterface):
 
     def post_moisture(self, moisture_level):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_MOISTURE_URL)
-        device_json = {'device': self.device_guid, 'moisture_level': moisture_level}
+        payload = {'device': self.device_guid, 'moisture_level': moisture_level}
+        headers = {"Content-Type": "application/json"}
         response = None
         try:
-            response = requests.post(request_url, data=device_json)
+            response = requests.request("POST", request_url, json=payload, headers=headers)
             logging.info(response.url)
             if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
@@ -129,10 +130,11 @@ class ServerCommunicator(IServerCommunicatorInterface):
             
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)
-        device_json = {'device': self.device_guid, 'execution_status': status.watering_status, 'message': status.message}
+        payload = {'device': self.device_guid, 'execution_status': status.watering_status, 'message': status.message}
+        headers = {"Content-Type": "application/json"}
         response = None
         try:
-            response = requests.post(request_url, data=device_json)
+            response = requests.request("POST", request_url, json=payload, headers=headers)
             logging.info(response.url)
             if response.status_code == h.HTTPStatus.FORBIDDEN:
                 logging.info(f'Device not registered: {response.status_code}')
