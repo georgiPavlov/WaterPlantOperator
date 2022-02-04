@@ -161,7 +161,8 @@ class Pump(IPumpInterface):
         logging.info(f'current time {current_time}')
         list_of_times = time_plan.water_times
         for water_time in list_of_times:
-            if water_time.weekday == weekday and water_time == current_time:
+            water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time.time_water)
+            if water_time.weekday == weekday and water_time_obj == current_time:
                 logging.info(f'water_time is: {water_time} and current time is: {current_time} ...Will start watering')
                 water_milliliters = time_plan.water_volume
                 if not self.is_water_level_sufficient(water_milliliters):

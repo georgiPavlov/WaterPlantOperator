@@ -18,6 +18,11 @@ class TimeKeeper:
         return now.strftime("%I:%M %p")
 
     @staticmethod
+    def get_time_from_time_string(time_string):
+        return datetime.datetime.strftime(time_string, "%I:%M %p")
+
+
+    @staticmethod
     def get_current_time_minus_delta(delta):
         now = datetime.datetime.now()
         time_change = datetime.timedelta(minutes=delta)
