@@ -23,11 +23,11 @@ class TimePlan(Plan):
         return f'<name {self.name}>'
 
 
-plan = '''{"name": "plant1", "plan_type": "basic", "water_volume": 200,
-        "water_times":[{"weekday": "Friday", "time_water": "08:40 pm"}]}'''
-
-json = TimePlan.from_json(plan)
-print(json)
-for obj in json.water_times:
-    print(f'{obj.time_water}  plus {obj.weekday}')
+# plan = '''{"name": "plant1", "plan_type": "basic", "water_volume": 200,
+#        "water_times":[{"weekday": "Friday", "time_water": "08:40 pm"}]}'''
+#
+# json = TimePlan.from_json(plan)
+# print(json)
+# for obj in json.water_times:
+#    print(f'{obj.time_water}  plus {obj.weekday}')
 

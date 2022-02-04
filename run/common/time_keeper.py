@@ -19,7 +19,7 @@ class TimeKeeper:
 
     @staticmethod
     def get_time_from_time_string(time_string):
-        return datetime.datetime.strftime(time_string, "%I:%M %p")
+        return datetime.datetime.strptime(time_string, "%I:%M %p")
 
 
     @staticmethod
