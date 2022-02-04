@@ -39,7 +39,7 @@ class IPumpInterface:
 
 class Pump(IPumpInterface):
     WATER_PLAN_BASIC = 'basic'
-    WATER_PLAN_TIME = 'time'
+    WATER_PLAN_TIME = 'time_based'
     WATER_PLAN_MOISTURE = 'moisture'
     DELETE_RUNNING_PLAN = 'delete'
     RELAY_SENSOR_KEY = 'relay'
