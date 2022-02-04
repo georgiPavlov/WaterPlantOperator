@@ -154,24 +154,26 @@ class Pump(IPumpInterface):
         return False
 
     def water_plant_by_timer(self, relay, time_plan):
-        timer = time_plan.timer
         today = date.today()
         weekday = calendar.day_name[today.weekday()]
         logging.info(f'current weekday {weekday}')
         current_time = self.get_time().get_current_time()
         logging.info(f'current time {current_time}')
-
-        if timer.weekday == weekday and timer.time == current_time:
-            water_milliliters = time_plan.water_volume
-            if not self.is_water_level_sufficient(water_milliliters):
-                logging.info("[moisture plan] can not water plant")
-                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
+        list_of_times = time_plan.water_times
+        for water_time in list_of_times:
+            if water_time.weekday == weekday and water_time == current_time:
+                logging.info(f'water_time is: {water_time} and current time is: {current_time} ...Will start watering')
+                water_milliliters = time_plan.water_volume
+                if not self.is_water_level_sufficient(water_milliliters):
+                    logging.info("[moisture plan] can not water plant")
+                    self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
+                    return
+                self.water_plant(relay, water_milliliters)
+                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_SUCCESS_TIMER}')
                 return
-            self.water_plant(relay, water_milliliters)
-            self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_SUCCESS_TIMER}')
-        else:
-            logging.info("water plant check passed without execution water operation")
-            self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_PLAN_CONDITION_NOT_MET}')
+            else:
+                logging.info("water plant check passed without execution water operation")
+                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_PLAN_CONDITION_NOT_MET}')
 
     def get_time(self):
         time_k = tk.TimeKeeper(tk.TimeKeeper.get_current_time())
