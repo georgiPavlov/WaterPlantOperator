@@ -1,7 +1,10 @@
 import datetime
 
+TIME_FORMAT = "%I:%M %p"
+
 
 class TimeKeeper:
+
     def __init__(self, current_time):
         self.current_time = current_time
         self.time_last_watered = None
@@ -19,12 +22,11 @@ class TimeKeeper:
 
     @staticmethod
     def get_time_from_time_string(time_string):
-        return datetime.datetime.strptime(time_string, "%I:%M %p")
-
+        return datetime.datetime.strptime(time_string, TIME_FORMAT).strftime(TIME_FORMAT)
 
     @staticmethod
     def get_current_time_minus_delta(delta):
         now = datetime.datetime.now()
         time_change = datetime.timedelta(minutes=delta)
         time_with_delta = now - time_change
-        return time_with_delta.strftime("%I:%M %p")
+        return time_with_delta.strftime(TIME_FORMAT)
