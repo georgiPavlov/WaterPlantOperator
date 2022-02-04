@@ -49,7 +49,7 @@ class Pump(IPumpInterface):
     def __init__(self, water_max_capacity, water_pumped_in_second, moisture_max_level):
         IPumpInterface.__init__(self)
         self.water_time = self.get_time()
-        self.water_time.set_date_last_watered(self.get_date())
+        self.water_time.set_date_last_watered(self.water_time.get_current_date())
         self.water_time.set_time_last_watered(self.water_time.get_current_time())
         self.water_max_capacity = water_max_capacity
         self.water_level = self.water_max_capacity
