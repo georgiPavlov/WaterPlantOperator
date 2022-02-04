@@ -49,6 +49,7 @@ class Pump(IPumpInterface):
     def __init__(self, water_max_capacity, water_pumped_in_second, moisture_max_level):
         IPumpInterface.__init__(self)
         self.water_time = self.get_time()
+        self.water_time.set_date_last_watered(self.get_date())
         self.water_time.set_time_last_watered(self.water_time.get_current_time())
         self.water_max_capacity = water_max_capacity
         self.water_level = self.water_max_capacity
@@ -162,7 +163,9 @@ class Pump(IPumpInterface):
         list_of_times = time_plan.water_times
         for water_time in list_of_times:
             water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time.time_water)
-            if water_time.weekday == weekday and water_time_obj == current_time:
+            if (water_time.weekday == weekday and water_time_obj == current_time and
+                    water_time_obj != self.water_time.time_last_watered and
+                    self.get_date().get_current_date() != self.water_time.date_last_watered):
                 logging.info(f'water_time is: {water_time} and current time is: {current_time} ...Will start watering')
                 water_milliliters = time_plan.water_volume
                 if not self.is_water_level_sufficient(water_milliliters):
@@ -170,6 +173,8 @@ class Pump(IPumpInterface):
                     self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
                     return
                 self.water_plant(relay, water_milliliters)
+                self.water_time.set_time_last_watered(water_time_obj)
+                self.water_time.set_date_last_watered(self.get_date().get_current_date())
                 self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_SUCCESS_TIMER}')
                 return
             else:
@@ -180,6 +185,11 @@ class Pump(IPumpInterface):
         time_k = tk.TimeKeeper(tk.TimeKeeper.get_current_time())
         logging.info(f'init current time at: {time_k.get_current_time()}')
         return time_k
+
+    def get_date(self):
+        date_k = tk.TimeKeeper(tk.TimeKeeper.get_current_date())
+        logging.info(f'init current time at: {date_k.get_current_date()}')
+        return date_k
 
     def reset_water_level(self):
         logging.info(f'reseting water: current water level: {self.water_level}')
