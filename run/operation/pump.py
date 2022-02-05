@@ -49,7 +49,7 @@ class Pump(IPumpInterface):
     def __init__(self, water_max_capacity, water_pumped_in_second, moisture_max_level):
         IPumpInterface.__init__(self)
         self.water_time = self.get_time()
-        self.water_time.set_date_last_watered(None)
+        self.water_time.set_date_last_watered(self.water_time.get_current_date())
         self.water_time.set_time_last_watered(self.water_time.get_current_time())
         self.water_max_capacity = water_max_capacity
         self.water_level = self.water_max_capacity
@@ -164,8 +164,8 @@ class Pump(IPumpInterface):
         for water_time in list_of_times:
             water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time.time_water)
             if (water_time.weekday == weekday and water_time_obj == current_time and
-                    water_time_obj != self.water_time.time_last_watered and
-                    self.get_date().get_current_date() != self.water_time.date_last_watered):
+                    (water_time_obj != self.water_time.time_last_watered or
+                     self.get_date().get_current_date() != self.water_time.date_last_watered)):
                 logging.info(f'water_time is: {water_time} and current time is: {current_time} ...Will start watering')
                 water_milliliters = time_plan.water_volume
                 if not self.is_water_level_sufficient(water_milliliters):
