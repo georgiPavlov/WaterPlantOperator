@@ -1,6 +1,6 @@
 import datetime
 
-TIME_FORMAT = "%I:%M %p"
+TIME_FORMAT = "%H:%M"
 
 
 class TimeKeeper:
@@ -22,7 +22,7 @@ class TimeKeeper:
     @staticmethod
     def get_current_time():
         now = datetime.datetime.now()
-        return now.strftime("%I:%M %p")
+        return now.strftime(TIME_FORMAT)
 
     @staticmethod
     def get_current_date():
