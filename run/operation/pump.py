@@ -60,7 +60,10 @@ class Pump(IPumpInterface):
 
     def execute_water_plan(self, plan, **sensors):
         logging.info(plan)
-        plan_type = plan[self.PLAN_TYPE_KEY]
+        if isinstance(plan, dict):
+            plan_type = plan[self.PLAN_TYPE_KEY]
+        else:
+            plan_type = plan.plan_type
         relay = sensors.get(self.RELAY_SENSOR_KEY)
         logging.info('plan_type')
         if plan_type == self.WATER_PLAN_BASIC:
@@ -74,14 +77,17 @@ class Pump(IPumpInterface):
             else:
                 self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_BASIC_PLAN_SUCCESS}')
         elif plan_type == self.WATER_PLAN_MOISTURE:
-            plan_obj = m.MoisturePlan.from_json(j.dump_json(plan))
-            self.running_plan = plan_obj
+            if isinstance(plan, dict):
+                plan_obj = m.MoisturePlan.from_json(j.dump_json(plan))
+                self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_MOISTURE}')
             moisture_sensor = sensors.get(self.MOISTURE_SENSOR_KEY)
             self.water_plant_by_moisture(relay, moisture_sensor, self.running_plan)
         elif plan_type == self.WATER_PLAN_TIME:
-            plan_obj = t.TimePlan.from_json(j.dump_json(plan))
-            self.running_plan = plan_obj
+            if isinstance(plan, dict):
+                plan_obj = t.TimePlan.from_json(j.dump_json(plan))
+                if plan_obj.execute_only_once:
+                    self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_TIME}')
             self.water_plant_by_timer(relay, self.running_plan)
         elif plan_type == self.DELETE_RUNNING_PLAN:

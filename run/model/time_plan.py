@@ -9,15 +9,18 @@ from typing import List
 
 class TimePlan(Plan):
     water_times: List[WaterTime]
+    execute_only_once: bool
 
-    def __init__(self, name, plan_type, water_volume, water_times: List[WaterTime]) -> None:
+    def __init__(self, name, plan_type, water_volume, water_times: List[WaterTime], execute_only_once: bool) -> None:
         self.water_times = water_times
+        self.execute_only_once = execute_only_once
         Plan.__init__(self, name, plan_type, water_volume)
 
     @classmethod
     def from_json(cls, json_string):
         time_plan = jc.get_json_sm(json_string)
-        return cls(time_plan.name, time_plan.plan_type, time_plan.water_volume, time_plan.water_times)
+        return cls(time_plan.name, time_plan.plan_type, time_plan.water_volume, time_plan.water_times,
+                   time_plan.execute_only_once)
 
     def __repr__(self):
         return f'<name {self.name}>'

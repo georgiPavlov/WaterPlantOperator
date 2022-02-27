@@ -1,5 +1,6 @@
 import logging
 from time import sleep
+import run.common.json_creator as j
 import run.model.status as st
 
 
@@ -34,6 +35,8 @@ class ServerChecker(IServerCheckerInterface):
                     if running_plan is None:
                         logging.info('running plan not found')
                         continue
+                    else:
+                        plan = running_plan
                 logging.info(f'Getting status: {running_plan}')
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
