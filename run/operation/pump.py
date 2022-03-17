@@ -86,8 +86,7 @@ class Pump(IPumpInterface):
         elif plan_type == self.WATER_PLAN_TIME:
             if isinstance(plan, dict):
                 plan_obj = t.TimePlan.from_json(j.dump_json(plan))
-                if plan_obj.execute_only_once:
-                    self.running_plan = plan_obj
+                self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_TIME}')
             self.water_plant_by_timer(relay, self.running_plan)
         elif plan_type == self.DELETE_RUNNING_PLAN:
@@ -181,7 +180,9 @@ class Pump(IPumpInterface):
                 self.water_plant(relay, water_milliliters)
                 self.water_time.set_time_last_watered(water_time_obj)
                 self.water_time.set_date_last_watered(self.get_date().get_current_date())
-                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_SUCCESS_TIMER}')
+                self.watering_status = s.Status(watering_status=True, message=f'{s.MESSAGE_SUCCESS_TIMER}')
+                if time_plan.execute_only_once:
+                    self.running_plan = None
                 return
             else:
                 logging.info("water plant check passed without execution water operation")

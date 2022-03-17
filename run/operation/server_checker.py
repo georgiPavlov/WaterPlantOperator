@@ -17,6 +17,7 @@ class IServerCheckerInterface:
 
 
 class ServerChecker(IServerCheckerInterface):
+    WATER_CONST = 'water'
 
     def __init__(self, pump, communicator, wait_time_between_cycle):
         self.pump = pump
@@ -28,6 +29,10 @@ class ServerChecker(IServerCheckerInterface):
         while True:
             try:
                 plan = self.communicator.get_plan()
+                water_level_json = self.communicator.get_water_level()
+                if water_level_json != self.communicator.return_emply_json():
+                    water_level_value = water_level_json[self.WATER_CONST]
+                    self.pump.water_max_capacity = water_level_value
                 running_plan = self.pump.get_running_plan()
                 logging.info(f'Running plan: {running_plan}')
                 if plan == self.communicator.return_emply_json():

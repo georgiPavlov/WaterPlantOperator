@@ -8,24 +8,28 @@ import run.common.file as f
 
 class IServerCommunicatorInterface:
 
-    #getPlan
+    # getPlan
     def get_plan(self):
         pass
 
-    #postWaterpip index versions
+    # postWaterpip index versions
     def post_water(self, water):
         pass
 
-    #postMoisture
+    # postMoisture
     def post_moisture(self, moisture_level):
         pass
 
-    #postPicture
+    # postPicture
     def post_picture(self):
         pass
-    
-    #postPlanExecution
+
+    # postPlanExecution
     def post_plan_execution(self, status):
+        pass
+
+    # getWaterLevel
+    def get_water_level(self, status):
         pass
 
 
@@ -35,6 +39,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_MOISTURE_URL = 'postMoisture'
     POST_PICTURE = 'postPicture'
     POST_STATUS = 'postStatus'
+    GET_WATER = 'getWaterLevel'
     IMAGE_PATH = '/tmp/image.png'
     PROTOCOL = 'http'
     PORT = '8080'
@@ -127,7 +132,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         except requests.exceptions.RequestException as e:
             logging.info(f'exception with server {str(e)}')
             self.print_respose(response)
-            
+
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)
         payload = {'device': self.device_guid, 'execution_status': status.watering_status, 'message': status.message}
@@ -148,6 +153,33 @@ class ServerCommunicator(IServerCommunicatorInterface):
             logging.info(f'exception with server {str(e)}')
             self.print_respose(response)
         return self.return_emply_json()
+
+    def get_water_level(self):
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.GET_WATER)
+        device_json = {'device': self.device_guid}
+        response = None
+        try:
+            response = requests.get(request_url, params=device_json)
+            logging.info(response.url)
+            if response.status_code == h.HTTPStatus.NO_CONTENT:
+                logging.info(f'No water reset in queue: {response.status_code}')
+            elif response.status_code == h.HTTPStatus.FORBIDDEN:
+                logging.info(f'Device not registered: {response.status_code}')
+            elif response.status_code == h.HTTPStatus.OK:
+                logging.info(f'Reset water: {response.status_code}')
+                json_response = response.json()
+                logging.info(f'Response: {json_response}')
+                return json_response
+            else:
+                logging.info(f'response: {response.status_code}')
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
+        return self.return_emply_json()
+
+    def print_respose(self, response):
+        if response is not None:
+            logging.info(response.text)
 
     # to do revert to constant usage when using real ip address
     def get_ip_address(self):
