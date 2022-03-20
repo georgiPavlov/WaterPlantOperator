@@ -1,0 +1,19 @@
+from picamera import PiCamera
+from time import sleep
+
+
+def initCamera():
+    return PiCamera()
+
+
+class Camera():
+    def __init__(self, camera_instance, photos_dir, wait_before_still_in_seconds):
+        self.camera_instance = camera_instance
+        self.photos_dir = photos_dir
+        self.wait_before_still_in_seconds = wait_before_still_in_seconds
+
+    def take_photo(self, photo_name):
+        self.camera_instance.start_preview()
+        sleep(self.wait_before_still_in_seconds)
+        self.camera_instance.capture(f'{self.photos_dir}/{photo_name}')
+        self.camera_instance.stop_preview()

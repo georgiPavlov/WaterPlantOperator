@@ -21,7 +21,7 @@ class IServerCommunicatorInterface:
         pass
 
     # postPicture
-    def post_picture(self):
+    def post_picture(self, photo_name):
         pass
 
     # postPlanExecution
@@ -38,15 +38,17 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_WATER_URL = 'postWater'
     POST_MOISTURE_URL = 'postMoisture'
     POST_PICTURE = 'postPicture'
+    GET_PICTURE = 'getPicture'
     POST_STATUS = 'postStatus'
     GET_WATER = 'getWaterLevel'
     IMAGE_PATH = '/tmp/image.png'
     PROTOCOL = 'http'
     PORT = '8080'
 
-    def __init__(self, device_guid):
+    def __init__(self, device_guid, photos_dir):
         self.device_guid = device_guid
         self.water_server_ip = self.get_ip_address()
+        self.photos_dir = photos_dir
         IServerCommunicatorInterface.__init__(self)
 
     def get_plan(self):
@@ -118,12 +120,19 @@ class ServerCommunicator(IServerCommunicatorInterface):
             self.print_respose(response)
         return self.return_emply_json()
 
-    def post_picture(self):
+    def post_picture(self, photo_name):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_PICTURE)
-        base64_image = f.return_file_content_in_base64_format(self.IMAGE_PATH)
 
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        payload = jc.dump_json({"image": base64_image, "other_key": "value"})
+        headers = {"Content-Type": "multipart/form-data; boundary=---011000010111000001101001"}
+
+        payload = f'-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"image_file\"; ' \
+                  f'filename=\"{self.photos_dir}/{photo_name}\"\r\nContent-Type: ' \
+                  f'image/png\r\n\r\n\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; ' \
+                  f'name=\"device_id\"\r\n\r\n{self.device_guid}\r\n-----011000010111000001101001\r\nContent' \
+                  f'-Disposition: form-data; ' \
+                  f'name=\"photo_id\"\r\n\r\n{photo_name}\r\n-----011000010111000001101001' \
+                  f'--\r\n '
+
         response = None
         try:
             response = requests.post(request_url, data=payload, headers=headers)
@@ -132,6 +141,29 @@ class ServerCommunicator(IServerCommunicatorInterface):
         except requests.exceptions.RequestException as e:
             logging.info(f'exception with server {str(e)}')
             self.print_respose(response)
+
+    def get_picture(self):
+        request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.GET_PICTURE)
+        device_json = {'device': self.device_guid}
+        response = None
+        try:
+            response = requests.get(request_url, params=device_json)
+            logging.info(response.url)
+            if response.status_code == h.HTTPStatus.NO_CONTENT:
+                logging.info(f'No new picture in queue: {response.status_code}')
+            elif response.status_code == h.HTTPStatus.FORBIDDEN:
+                logging.info(f'Device not registered: {response.status_code}')
+            elif response.status_code == h.HTTPStatus.OK:
+                logging.info(f'New picture for capture: {response.status_code}')
+                json_response = response.json()
+                logging.info(f'Response: {json_response}')
+                return json_response
+            else:
+                logging.info(f'response: {response.status_code}')
+        except requests.exceptions.RequestException as e:
+            logging.info(f'exception with server {str(e)}')
+            self.print_respose(response)
+        return self.return_emply_json()
 
     def post_plan_execution(self, status):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_STATUS)

@@ -2,6 +2,7 @@ import logging
 from time import sleep
 import run.common.json_creator as j
 import run.model.status as st
+from run.operation.camera_op import PHOTO_ID, CAMERA_KEY
 
 
 class IServerCheckerInterface:
@@ -9,7 +10,7 @@ class IServerCheckerInterface:
     def plan_executor(self, **sensors):
         pass
 
-    def send_result(self, moisture_level, status, water_level):
+    def send_result(self, moisture_level, status, water_level, picture_name):
         pass
 
     def show(self):
@@ -19,7 +20,7 @@ class IServerCheckerInterface:
 class ServerChecker(IServerCheckerInterface):
     WATER_CONST = 'water'
 
-    def __init__(self, pump, communicator, wait_time_between_cycle):
+    def __init__(self, pump, communicator, wait_time_between_cycle, ):
         self.pump = pump
         self.communicator = communicator
         self.wait_time_between_cycle = wait_time_between_cycle
@@ -28,11 +29,11 @@ class ServerChecker(IServerCheckerInterface):
     def plan_executor(self, **sensors):
         while True:
             try:
-                plan = self.communicator.get_plan()
                 water_level_json = self.communicator.get_water_level()
                 if water_level_json != self.communicator.return_emply_json():
                     water_level_value = water_level_json[self.WATER_CONST]
                     self.pump.water_max_capacity = water_level_value
+                plan = self.communicator.get_plan()
                 running_plan = self.pump.get_running_plan()
                 logging.info(f'Running plan: {running_plan}')
                 if plan == self.communicator.return_emply_json():
@@ -42,18 +43,28 @@ class ServerChecker(IServerCheckerInterface):
                         continue
                     else:
                         plan = running_plan
+                photo_json = self.communicator.get_photo()
+                photo_name_ = None
+                if photo_json != self.communicator.return_emply_json():
+                    photo_name_ = photo_json[PHOTO_ID]
+                    camera = sensors.get(CAMERA_KEY)
+                    camera.take_photo(photo_name_)
+
                 logging.info(f'Getting status: {running_plan}')
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
                 moisture_level = self.pump.get_moisture_level_in_percent()
-                self.send_result(moisture_level, status, water_level)
+                self.send_result(moisture_level, status, water_level, photo_name_)
                 sleep(self.wait_time_between_cycle)
                 logging.info('Executed watering loop')
             except Exception as e:
                 logging.info('[Exception]' + str(e))
 
-    def send_result(self, moisture_level, status, water_level):
+    def send_result(self, moisture_level, status, water_level, picture_name):
         self.communicator.post_plan_execution(status)
         self.communicator.post_water(water_level)
         self.communicator.post_moisture(moisture_level)
-        # self.communicator.post_picture(picture)
+        if picture_name is not None:
+            self.communicator.post_picture(picture_name)
+
+
