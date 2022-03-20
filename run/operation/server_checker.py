@@ -30,8 +30,10 @@ class ServerChecker(IServerCheckerInterface):
         while True:
             try:
                 water_level_json = self.communicator.get_water_level()
+                logging.info(f'Water level from server: {water_level_json}')
                 if water_level_json != self.communicator.return_emply_json():
                     water_level_value = water_level_json[self.WATER_CONST]
+                    logging.info(f'Resetting water: {water_level_value}')
                     self.pump.water_max_capacity = water_level_value
                 plan = self.communicator.get_plan()
                 running_plan = self.pump.get_running_plan()
@@ -45,11 +47,13 @@ class ServerChecker(IServerCheckerInterface):
                         plan = running_plan
                 photo_json = self.communicator.get_photo()
                 photo_name_ = None
+                logging.info(f'Photo for capture: {photo_json}')
                 if photo_json != self.communicator.return_emply_json():
                     photo_name_ = photo_json[PHOTO_ID]
+                    logging.info(f'Taking photo: {photo_name_}')
                     camera = sensors.get(CAMERA_KEY)
                     camera.take_photo(photo_name_)
-
+                    logging.info(f'Photo taken: {photo_name_}')
                 logging.info(f'Getting status: {running_plan}')
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
