@@ -35,7 +35,7 @@ class ServerChecker(IServerCheckerInterface):
                     water_level_value = water_level_json[self.WATER_CONST]
                     logging.info(f'Resetting water: {water_level_value}')
                     self.pump.water_max_capacity = water_level_value
-                photo_json = self.communicator.get_photo()
+                photo_json = self.communicator.get_picture()
                 photo_name_ = None
                 logging.info(f'Photo for capture: {photo_json}')
                 if photo_json != self.communicator.return_emply_json():
