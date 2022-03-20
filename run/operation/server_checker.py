@@ -60,7 +60,7 @@ class ServerChecker(IServerCheckerInterface):
                 moisture_level = self.pump.get_moisture_level_in_percent()
                 self.send_result(moisture_level, status, water_level, photo_name_)
                 sleep(self.wait_time_between_cycle)
-                logging.info('Executed watering loop')
+                logging.info('Executed watering loop\n\n\n')
             except Exception as e:
                 logging.info('[Exception]' + str(e))
 
