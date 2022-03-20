@@ -51,6 +51,7 @@ class ServerChecker(IServerCheckerInterface):
                     logging.info(f'No new plan for execution found: {running_plan}')
                     if running_plan is None:
                         logging.info('running plan not found')
+                        sleep(self.wait_time_between_cycle)
                         continue
                     else:
                         plan = running_plan
