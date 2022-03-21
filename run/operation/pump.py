@@ -153,9 +153,12 @@ class Pump(IPumpInterface):
     def if_water_time_out_of_range(self, check_int):
         out_of_range_delta = check_int * 2
         out_of_range_time = self.get_time().get_current_time_minus_delta(out_of_range_delta)
-        if self.water_time.time_last_watered > out_of_range_time:
+        logging.info(f'in out of range func time_last_watered: {self.water_time.time_last_watered} '
+                     f'and out_of_range_time is {out_of_range_time}')
+        if self.water_time.time_last_watered < out_of_range_time:
             logging.info(
-                f'Time {self.water_time.time_last_watered} is out of range because it is bigger than {out_of_range_time}')
+                f'Time {self.water_time.time_last_watered} is out of range because it is less than {out_of_range_time}'
+            )
             return True
         return False
 
