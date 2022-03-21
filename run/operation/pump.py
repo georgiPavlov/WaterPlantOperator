@@ -73,9 +73,9 @@ class Pump(IPumpInterface):
             plan_obj = p.Plan.from_json(json_string)
             is_watering_successful = self.water_plant(relay, plan_obj.water_volume)
             if is_watering_successful:
-                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
+                self.watering_status = s.Status(watering_status=True, message=f'{s.MESSAGE_BASIC_PLAN_SUCCESS}')
             else:
-                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_BASIC_PLAN_SUCCESS}')
+                self.watering_status = s.Status(watering_status=False, message=f'{s.MESSAGE_INSUFFICIENT_WATER}')
         elif plan_type == self.WATER_PLAN_MOISTURE:
             if isinstance(plan, dict):
                 plan_obj = m.MoisturePlan.from_json(j.dump_json(plan))
@@ -101,7 +101,7 @@ class Pump(IPumpInterface):
 
     def water_plant(self, relay, water_milliliters):
         if not self.is_water_level_sufficient(water_milliliters):
-            logging.info("[moisture plan] can not water plant")
+            logging.info("can not water plant")
             return False
         water_seconds = self.get_water_time_in_seconds_from_percent(water_milliliters)
         logging.info(f'water_seconds: {water_seconds}')
