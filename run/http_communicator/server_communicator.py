@@ -42,6 +42,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     POST_STATUS = 'postStatus'
     GET_WATER = 'getWaterLevel'
     IMAGE_PATH = '/tmp/image.png'
+    APP_MASTER_URL = 'gadget_communicator_pull'
     PROTOCOL = 'http'
     PORT = '8080'
 
@@ -55,8 +56,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.GET_PLAN_URL)
         device_json = {'device': self.device_guid}
         response = None
+        payload = ""
         try:
-            response = requests.get(request_url, params=device_json)
+            response = requests.get(request_url, data=payload, params=device_json)
             logging.info(response.url)
             if response.status_code == h.HTTPStatus.NO_CONTENT:
                 logging.info(f'No new plan in queue: {response.status_code}')
@@ -223,7 +225,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return ip_address
 
     def build_ulr_for_request(self, protocol, ip, request_url):
-        url_address = f'{protocol}://{ip}:{self.PORT}/{request_url}'
+        url_address = f'{protocol}://{ip}:{self.PORT}/{self.APP_MASTER_URL}/{request_url}'
         logging.info(f'url_address: {url_address}')
         return url_address
 
