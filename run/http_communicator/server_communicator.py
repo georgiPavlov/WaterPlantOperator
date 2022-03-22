@@ -136,8 +136,8 @@ class ServerCommunicator(IServerCommunicatorInterface):
         files = {
             'image_file': (f'{photo_path}',
                            open(f'{photo_path}', 'rb')),
-            'device_id': (None, f'{device_id}'),
-            'photo_id': (None, f'{photo_id}'),
+            'device_id': (f'{device_id}', f'{device_id}'),
+            'photo_id': (f'{photo_id}', f'{photo_id}'),
         }
         response = None
         try:
