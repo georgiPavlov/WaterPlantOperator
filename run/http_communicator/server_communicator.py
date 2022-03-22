@@ -136,12 +136,12 @@ class ServerCommunicator(IServerCommunicatorInterface):
         files = {
             'image_file': (f'{photo_path}',
                            open(f'{photo_path}', 'rb')),
-            'device_id': (f'{device_id}', f'{device_id}'),
-            'photo_id': (f'{photo_id}', f'{photo_id}'),
+            'device_id': (None, f'{device_id}'),
+            'photo_id': (None, f'{photo_id}'),
         }
         response = None
         try:
-            response = requests.post(request_url, headers=headers, files=files)
+            response = requests.post(request_url, headers=headers, params=files ,files=files)
             data = response.json()
             logging.info(data)
         except requests.exceptions.RequestException as e:
