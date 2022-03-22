@@ -4,6 +4,7 @@ import http as h
 import requests
 import run.common.json_creator as jc
 import run.common.file as f
+from run.operation.camera_op import CAMERA_FORMAT
 
 
 class IServerCommunicatorInterface:
@@ -128,7 +129,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         headers = {"Content-Type": "multipart/form-data; boundary=---011000010111000001101001"}
 
         payload = f'-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"image_file\"; ' \
-                  f'filename=\"{self.photos_dir}/{photo_name}\"\r\nContent-Type: ' \
+                  f'filename=\"{self.photos_dir}/{photo_name}{CAMERA_FORMAT}\"\r\nContent-Type: ' \
                   f'image/png\r\n\r\n\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; ' \
                   f'name=\"device_id\"\r\n\r\n{self.device_guid}\r\n-----011000010111000001101001\r\nContent' \
                   f'-Disposition: form-data; ' \
