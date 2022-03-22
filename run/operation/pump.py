@@ -168,7 +168,7 @@ class Pump(IPumpInterface):
         logging.info(f'current weekday {weekday}')
         current_time = self.get_time().get_current_time()
         logging.info(f'current time {current_time}')
-        list_of_times = time_plan.water_times
+        list_of_times = time_plan.weekday_times
         for water_time in list_of_times:
             water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time.time_water)
             if (water_time.weekday == weekday and water_time_obj == current_time and
