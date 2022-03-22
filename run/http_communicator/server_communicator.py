@@ -141,7 +141,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         }
         response = None
         try:
-            response = requests.post(request_url, headers=headers, params=files ,files=files)
+            response = requests.post(request_url, headers=headers, data=files ,files=files)
             data = response.json()
             logging.info(data)
         except requests.exceptions.RequestException as e:
