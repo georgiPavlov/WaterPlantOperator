@@ -3,11 +3,12 @@ import logging
 from run.operation import camera_op
 from run.sensor.relay import Relay
 from run.sensor.moisture_sensor import Moisture
-from run.sensor.camera_sensor import Camera, initCamera
+from run.sensor.camera_sensor import Camera
 from run.http_communicator.server_communicator import ServerCommunicator
 from run.operation.pump import Pump
 from run.operation.server_checker import ServerChecker
 from pathlib import Path
+from picamera import PiCamera
 
 WATER_PUMPED_IN_SECOND = 10
 MOISTURE_MAX_LEVEL = 0
@@ -35,7 +36,7 @@ def main():
     server_checker = ServerChecker(pump=pump, communicator=sever_communicator,
                                    wait_time_between_cycle=WATER_TIME_BETWEEN_CYCLE)
 
-    camera = Camera(camera_instance=initCamera, photos_dir=PHOTO_DIR,
+    camera = Camera(camera_instance=PiCamera(), photos_dir=PHOTO_DIR,
                     wait_before_still_in_seconds=DELAY_BETWEEN_PHOTO_TAKEN)
 
     logging.info("executor starting..")

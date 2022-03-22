@@ -1,9 +1,4 @@
-from picamera import PiCamera
 from time import sleep
-
-
-def initCamera():
-    return PiCamera()
 
 
 class Camera():
