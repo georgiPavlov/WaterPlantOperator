@@ -125,28 +125,23 @@ class ServerCommunicator(IServerCommunicatorInterface):
 
     def post_picture(self, photo_name):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_PICTURE)
-
-        headers = {"Content-Type": "multipart/form-data; boundary=---011000010111000001101001"}
-        p = f'{self.photos_dir}/{photo_name}{CAMERA_FORMAT}'
+        photo_path = f'{self.photos_dir}/{photo_name}{CAMERA_FORMAT}'
         photo_id = f'{photo_name}'
         device_id = f'{self.device_guid}'
 
-        print(p)
-        print(photo_id)
-        print(device_id)
+        headers = {
+            'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
+        }
 
-
-        payload = f'-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"image_file\"; ' \
-                  f'filename=\"{self.photos_dir}/{photo_name}{CAMERA_FORMAT}\"\r\nContent-Type: ' \
-                  f'image/png\r\n\r\n\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; ' \
-                  f'name=\"device_id\"\r\n\r\n{self.device_guid}\r\n-----011000010111000001101001\r\nContent' \
-                  f'-Disposition: form-data; ' \
-                  f'name=\"photo_id\"\r\n\r\n{photo_name}\r\n-----011000010111000001101001' \
-                  f'--\r\n '
-        print(f'payload: {payload}')
+        files = {
+            'image_file': (f'{photo_path}',
+                           open(f'{photo_path}', 'rb')),
+            'device_id': (None, f'{device_id}'),
+            'photo_id': (None, f'{photo_id}'),
+        }
         response = None
         try:
-            response = requests.post(request_url, data=payload, headers=headers)
+            response = requests.post(request_url, headers=headers, files=files)
             data = response.json()
             logging.info(data)
         except requests.exceptions.RequestException as e:
