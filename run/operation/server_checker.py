@@ -44,6 +44,8 @@ class ServerChecker(IServerCheckerInterface):
                     camera = sensors.get(CAMERA_KEY)
                     camera.take_photo(photo_name_)
                     logging.info(f'Photo taken: {photo_name_}')
+                    self.communicator.post_picture(photo_name_)
+                    logging.info(f'Photo send: {photo_name_}')
                 plan = self.communicator.get_plan()
                 running_plan = self.pump.get_running_plan()
                 logging.info(f'Running plan: {running_plan}')
@@ -59,17 +61,16 @@ class ServerChecker(IServerCheckerInterface):
                 status = self.pump.execute_water_plan(plan, **sensors)
                 water_level = self.pump.get_water_level_in_percent()
                 moisture_level = self.pump.get_moisture_level_in_percent()
-                self.send_result(moisture_level, status, water_level, photo_name_)
+                self.send_result(moisture_level, status, water_level)
                 sleep(self.wait_time_between_cycle)
                 logging.info('Executed watering loop\n\n\n')
             except Exception as e:
                 logging.info('[Exception]' + str(e))
 
-    def send_result(self, moisture_level, status, water_level, picture_name):
+    def send_result(self, moisture_level, status, water_level):
         self.communicator.post_plan_execution(status)
         self.communicator.post_water(water_level)
         self.communicator.post_moisture(moisture_level)
-        if picture_name is not None:
-            self.communicator.post_picture(picture_name)
+
 
 
