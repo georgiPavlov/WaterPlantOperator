@@ -14,4 +14,3 @@ class Camera:
         sleep(self.wait_before_still_in_seconds)
         self.camera_instance.capture(f'{self.photos_dir}/{photo_name}{CAMERA_FORMAT}')
         self.camera_instance.stop_preview()
-        self.camera_instance.close()
