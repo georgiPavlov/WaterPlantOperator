@@ -5,6 +5,7 @@ import requests
 import run.common.json_creator as jc
 import run.common.file as f
 from run.operation.camera_op import CAMERA_FORMAT
+import os
 
 
 class IServerCommunicatorInterface:
@@ -126,27 +127,16 @@ class ServerCommunicator(IServerCommunicatorInterface):
     def post_picture(self, photo_name):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.POST_PICTURE)
         photo_path = f'{self.photos_dir}/{photo_name}{CAMERA_FORMAT}'
-        photo_id = f'{photo_name}'
-        device_id = f'{self.device_guid}'
 
-        headers = {
-            'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
-        }
-
-        files = {
-            'image_file': (f'{photo_path}',
-                           open(f'{photo_path}', 'rb')),
-            'device_id': (None, f'{device_id}'),
-            'photo_id': (None, f'{photo_id}'),
-        }
-        response = None
         try:
-            response = requests.post(request_url, headers=headers, data=files ,files=files)
-            data = response.json()
-            logging.info(data)
+            os.system(f"curl --request POST \
+              --url {request_url} \
+              --header 'Content-Type: multipart/form-data; boundary=---011000010111000001101001' \
+              --form image_file=@{photo_path} \
+              --form device_id={self.device_guid} \
+              --form photo_id={photo_name}")
         except requests.exceptions.RequestException as e:
             logging.info(f'exception with server {str(e)}')
-            self.print_respose(response)
 
     def get_picture(self):
         request_url = self.build_ulr_for_request(self.PROTOCOL, self.water_server_ip, self.GET_PICTURE)
