@@ -201,9 +201,9 @@ class Pump(IPumpInterface):
         logging.info(f'init current time at: {date_k.get_current_date()}')
         return date_k
 
-    def reset_water_level(self):
+    def reset_water_level(self, capacity):
         logging.info(f'reseting water: current water level: {self.water_level}')
-        self.water_level = self.water_max_capacity
+        self.water_level = capacity
 
     def is_water_level_sufficient(self, water_milliliters):
         if self.water_level - water_milliliters < 0:
