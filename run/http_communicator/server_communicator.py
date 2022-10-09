@@ -47,6 +47,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     APP_MASTER_URL = 'gadget_communicator_pull'
     PROTOCOL = 'http'
     PORT = '8080'
+    IP_ADDRESS = '192.168.1.17'
 
     def __init__(self, device_guid, photos_dir):
         self.device_guid = device_guid
@@ -216,7 +217,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         ip_address = s.getsockname()[0]
         logging.info(f'ip address: {ip_address}')
         s.close()
-        return ip_address
+        return self.IP_ADDRESS
 
     def build_ulr_for_request(self, protocol, ip, request_url):
         url_address = f'{protocol}://{ip}:{self.PORT}/{self.APP_MASTER_URL}/{request_url}'
