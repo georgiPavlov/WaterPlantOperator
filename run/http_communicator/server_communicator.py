@@ -47,7 +47,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     APP_MASTER_URL = 'gadget_communicator_pull'
     PROTOCOL = 'http'
     PORT = '8080'
-    IP_ADDRESS = '192.168.1.17'
+    IP_ADDRESS = 'water-me-lb-842691727.eu-central-1.elb.amazonaws.com'
 
     def __init__(self, device_guid, photos_dir):
         self.device_guid = device_guid
