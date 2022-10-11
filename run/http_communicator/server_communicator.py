@@ -220,7 +220,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return self.IP_ADDRESS
 
     def build_ulr_for_request(self, protocol, ip, request_url):
-        url_address = f'{protocol}://{ip}:{self.PORT}/{self.APP_MASTER_URL}/{request_url}'
+        url_address = f'{protocol}://{ip}/{self.APP_MASTER_URL}/{request_url}'
         logging.info(f'url_address: {url_address}')
         return url_address
 
