@@ -45,9 +45,9 @@ class ServerCommunicator(IServerCommunicatorInterface):
     GET_WATER = 'getWaterLevel'
     IMAGE_PATH = '/tmp/image.png'
     APP_MASTER_URL = 'gadget_communicator_pull'
-    PROTOCOL = 'http'
+    PROTOCOL = 'https'
     PORT = '8080'
-    IP_ADDRESS = 'water-me-lb-842691727.eu-central-1.elb.amazonaws.com'
+    IP_ADDRESS = 'wmeautomation.de'
 
     def __init__(self, device_guid, photos_dir):
         self.device_guid = device_guid
