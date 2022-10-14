@@ -46,7 +46,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
     IMAGE_PATH = '/tmp/image.png'
     APP_MASTER_URL = 'gadget_communicator_pull'
     PROTOCOL = 'https'
-    PORT = '8080'
+    PORT = '444'
     IP_ADDRESS = 'wmeautomation.de'
 
     def __init__(self, device_guid, photos_dir):
@@ -220,7 +220,7 @@ class ServerCommunicator(IServerCommunicatorInterface):
         return self.IP_ADDRESS
 
     def build_ulr_for_request(self, protocol, ip, request_url):
-        url_address = f'{protocol}://{ip}/{self.APP_MASTER_URL}/{request_url}'
+        url_address = f'{protocol}://{ip}:{self.PORT}/{self.APP_MASTER_URL}/{request_url}'
         logging.info(f'url_address: {url_address}')
         return url_address
 
