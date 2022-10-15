@@ -57,6 +57,7 @@ class Pump(IPumpInterface):
         self.water_pumped_in_second = water_pumped_in_second
         self.running_plan = None
         self.watering_status = None
+        self.moisture_sensor = None
 
     def execute_water_plan(self, plan, **sensors):
         logging.info(plan)
@@ -82,6 +83,7 @@ class Pump(IPumpInterface):
                 self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_MOISTURE}')
             moisture_sensor = sensors.get(self.MOISTURE_SENSOR_KEY)
+            self.moisture_sensor = moisture_sensor
             self.water_plant_by_moisture(relay, moisture_sensor, self.running_plan)
         elif plan_type == self.WATER_PLAN_TIME:
             if isinstance(plan, dict):
@@ -216,7 +218,7 @@ class Pump(IPumpInterface):
         return round(water_milliliters / self.water_pumped_in_second)
 
     def get_moisture_level_in_percent(self):
-        return round(100 - self.moisture_level * 100)
+        return round(100 - self.moisture_sensor.value * 100)
 
     def get_water_level_in_percent(self):
         return 100 * float(self.water_level) / float(self.water_max_capacity)
