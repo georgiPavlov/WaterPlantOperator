@@ -10,7 +10,7 @@ class IServerCheckerInterface:
     def plan_executor(self, **sensors):
         pass
 
-    def send_result(self, moisture_level, status, water_level, picture_name):
+    def send_result(self, moisture_level, status, water_level):
         pass
 
     def show(self):
@@ -27,6 +27,7 @@ class ServerChecker(IServerCheckerInterface):
         IServerCheckerInterface.__init__(self)
 
     def plan_executor(self, **sensors):
+        self.pump.moisture_sensor = sensors.get(self.pump.MOISTURE_SENSOR_KEY)
         while True:
             try:
                 water_level_json = self.communicator.get_water_level()

@@ -83,7 +83,6 @@ class Pump(IPumpInterface):
                 self.running_plan = plan_obj
             logging.info(f'option: {self.WATER_PLAN_MOISTURE}')
             moisture_sensor = sensors.get(self.MOISTURE_SENSOR_KEY)
-            self.moisture_sensor = moisture_sensor
             self.water_plant_by_moisture(relay, moisture_sensor, self.running_plan)
         elif plan_type == self.WATER_PLAN_TIME:
             if isinstance(plan, dict):
