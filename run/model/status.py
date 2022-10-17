@@ -13,4 +13,5 @@ MESSAGE_DELETED_PLAN = "[Watering plan deleted]"
 MESSAGE_SUFFICIENT_WATER = "[Sufficient water in the container]"
 MESSAGE_PLAN_CONDITION_NOT_MET = "[Plan condition not met]"
 MESSAGE_BASIC_PLAN_SUCCESS = "[Successful watering of plant]"
+HEALTH_CHECK = "healthcheck"
 

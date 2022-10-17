@@ -30,6 +30,8 @@ class ServerChecker(IServerCheckerInterface):
         self.pump.moisture_sensor = sensors.get(self.pump.MOISTURE_SENSOR_KEY)
         while True:
             try:
+                health_status = st.Status(watering_status=False, message=st.HEALTH_CHECK)
+                self.communicator.post_plan_execution(health_status)
                 water_level_json = self.communicator.get_water_level()
                 logging.info(f'Water level from server: {water_level_json}')
                 if water_level_json != self.communicator.return_emply_json():
