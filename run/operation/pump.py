@@ -170,12 +170,12 @@ class Pump(IPumpInterface):
         current_time = self.get_time().get_current_time()
         logging.info(f'current time {current_time}')
         list_of_times = time_plan.weekday_times
-        for water_time in list_of_times:
-            water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time.time_water)
-            if (water_time.weekday == weekday and water_time_obj == current_time and
+        for water_time_ in list_of_times:
+            water_time_obj = tk.TimeKeeper.get_time_from_time_string(water_time_.time_water)
+            if (water_time_.weekday == weekday and water_time_obj == current_time and
                     (water_time_obj != self.water_time.time_last_watered or
                      self.get_date().get_current_date() != self.water_time.date_last_watered)):
-                logging.info(f'water_time is: {water_time} and current time is: {current_time} ...Will start watering')
+                logging.info(f'water_time is: {water_time_} and current time is: {current_time} ...Will start watering')
                 water_milliliters = time_plan.water_volume
                 if not self.is_water_level_sufficient(water_milliliters):
                     logging.info("[moisture plan] can not water plant")
