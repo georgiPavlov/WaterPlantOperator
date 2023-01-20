@@ -92,7 +92,6 @@ class Pump(IPumpInterface):
             self.water_plant_by_timer(relay, self.running_plan)
         elif plan_type == self.DELETE_RUNNING_PLAN:
             self.running_plan = None
-            self.water_time = None
             logging.info(f'option: {self.DELETE_RUNNING_PLAN}')
             self.watering_status = s.Status(watering_status=False, message=s.MESSAGE_DELETED_PLAN)
         else:
