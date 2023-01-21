@@ -10,7 +10,7 @@ from run.operation.server_checker import ServerChecker
 from pathlib import Path
 from picamera import PiCamera
 
-WATER_PUMPED_IN_SECOND = 1.429
+WATER_PUMPED_IN_SECOND = 70
 MOISTURE_MAX_LEVEL = 0
 WATER_TIME_BETWEEN_CYCLE = 10
 WATER_MAX_CAPACITY = 2000
