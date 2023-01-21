@@ -131,6 +131,7 @@ class Pump(IPumpInterface):
 
         logging.info("moisture is {}".format(moisture_sensor.value))
         if moisture_sensor.is_dry():
+        # if self.get_moisture_level_in_percent() > moisture_plan.moisture_threshold:
             water_milliliters = moisture_plan.water_volume
             if not self.is_water_level_sufficient(water_milliliters):
                 logging.info("[moisture plan] can not water plant")
