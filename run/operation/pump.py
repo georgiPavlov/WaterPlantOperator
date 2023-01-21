@@ -58,6 +58,7 @@ class Pump(IPumpInterface):
         self.running_plan = None
         self.watering_status = None
         self.moisture_sensor = None
+        self.water_reset = True
 
     def execute_water_plan(self, plan, **sensors):
         logging.info(plan)
@@ -205,6 +206,7 @@ class Pump(IPumpInterface):
     def reset_water_level(self, capacity):
         logging.info(f'reseting water: current water level: {self.water_level}')
         self.water_level = capacity
+        self.water_reset = True
 
     def is_water_level_sufficient(self, water_milliliters):
         if self.water_level - water_milliliters < 0:
@@ -214,7 +216,11 @@ class Pump(IPumpInterface):
         return True
 
     def get_water_time_in_seconds_from_percent(self, water_milliliters):
-        return round(water_milliliters / self.water_pumped_in_second) + 3
+        water_time_for_milliliters = round(water_milliliters / self.water_pumped_in_second)
+        if self.water_reset:
+            water_time_for_milliliters = water_time_for_milliliters + 3
+            self.water_reset = False
+        return water_time_for_milliliters
 
     def get_moisture_level_in_percent(self):
         return round(100 - self.moisture_sensor.value * 100)
