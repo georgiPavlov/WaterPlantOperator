@@ -214,7 +214,7 @@ class Pump(IPumpInterface):
         return True
 
     def get_water_time_in_seconds_from_percent(self, water_milliliters):
-        return round(water_milliliters / self.water_pumped_in_second)
+        return round(water_milliliters / self.water_pumped_in_second) + 3
 
     def get_moisture_level_in_percent(self):
         return round(100 - self.moisture_sensor.value * 100)
