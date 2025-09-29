@@ -72,7 +72,7 @@ services:
 
 networks:
   waterplant-network:
-    driver: bridge
+    external: true
     name: waterplant-network
 
 volumes:
