@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  waterplant-operator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: waterplant-operator
+    hostname: raspberry-pi-sim
+    ports:
+      - "8000:8000"  # API port
+      - "8080:8080"  # Alternative port for hardware interface
+    volumes:
+      # Mount logs directory for persistence
+      - ./logs:/app/logs
+      # Mount configuration files
+      - ./config:/app/config:ro
+      # Mount data directory for persistence
+      - ./data:/app/data
+      # Mount GPIO simulation (optional)
+      - /sys/class/gpio:/sys/class/gpio:rw
+    environment:
+      # Environment variables
+      - PYTHONPATH=/app
+      - ENVIRONMENT=container
+      - SIMULATION_MODE=true
+      - LOG_LEVEL=INFO
+      # Hardware simulation settings
+      - MOCK_GPIO=true
+      - MOCK_CAMERA=true
+      - MOCK_SENSORS=true
+      # API settings
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      # Backend communication
+      - BACKEND_URL=http://host.docker.internal:8001
+      - BACKEND_API_KEY=your-api-key-here
+    networks:
+      - waterplant-network
+    restart: unless-stopped
+    privileged: true  # Required for GPIO access simulation
+    devices:
+      # Mock GPIO devices
+      - /dev/gpiomem:/dev/gpiomem:rw
+      # Mock camera device
+      - /dev/video0:/dev/video0:rw
+    cap_add:
+      - SYS_RAWIO  # For GPIO access
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a monitoring service
+  waterplant-monitor:
+    image: python:3.9-slim
+    container_name: waterplant-monitor
+    hostname: waterplant-monitor
+    volumes:
+      - ./monitoring:/app/monitoring
+    environment:
+      - PYTHONPATH=/app
+      - OPERATOR_URL=http://waterplant-operator:8000
+    networks:
+      - waterplant-network
+    command: ["python3", "/app/monitoring/monitor.py"]
+    depends_on:
+      - waterplant-operator
+    restart: unless-stopped
+
+networks:
+  waterplant-network:
+    driver: bridge
+    name: waterplant-network
+
+volumes:
+  waterplant-logs:
+    driver: local
+  waterplant-data:
+    driver: local

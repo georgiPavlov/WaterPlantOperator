@@ -1,0 +1,49 @@
+# WaterPlantOperator Requirements
+# Core dependencies for Raspberry Pi simulation
+
+# Web framework
+flask==2.3.3
+flask-cors==4.0.0
+
+# HTTP requests
+requests==2.31.0
+
+# GPIO simulation (will be mocked in container)
+gpiozero==1.6.2
+# RPi.GPIO==0.7.1  # Commented out - will be mocked
+
+# Camera simulation (will be mocked in container)
+# picamera==1.13  # Commented out - will be mocked
+
+# System monitoring
+psutil==5.9.6
+
+# Data handling
+numpy==1.24.3
+pandas==2.0.3
+
+# Configuration
+python-dotenv==1.0.0
+
+# Logging
+colorlog==6.7.0
+
+# Date/time handling
+python-dateutil==2.8.2
+
+# JSON handling
+jsonschema==4.19.1
+
+# Testing
+pytest==7.4.2
+pytest-mock==3.11.1
+
+# Development tools
+black==23.7.0
+flake8==6.0.0
+
+# Hardware simulation
+# These will be mocked in the container environment
+# gpiozero==1.6.2
+# RPi.GPIO==0.7.1
+# picamera==1.13
