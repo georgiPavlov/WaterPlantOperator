@@ -962,3 +962,5 @@ az container create --resource-group myResourceGroup --name waterplant-server --
 ---
 
 This comprehensive API integration guide provides everything needed to build a complete monitoring and control system for your WaterPlantOperator devices. The modular design allows for easy extension and customization based on your specific requirements.
+
+

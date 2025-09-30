@@ -302,3 +302,5 @@ if __name__ == "__main__":
     print(json.dumps(hardware_manager.get_system_info(), indent=2))
     
     print("\nMock hardware test completed!")
+
+

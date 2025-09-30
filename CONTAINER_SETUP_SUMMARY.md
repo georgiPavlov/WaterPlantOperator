@@ -185,3 +185,5 @@ WaterPlantOperator/
 **🐳 Your WaterPlantOperator is now fully containerized and ready to simulate a Raspberry Pi environment! 🐳**
 
 The container includes complete hardware simulation, monitoring, and seamless integration with the complete Water Plant Automation System.
+
+

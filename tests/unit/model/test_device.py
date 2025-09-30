@@ -46,3 +46,4 @@ class TestDevice:
         
         with pytest.raises(TypeError):
             Device.from_json(json_string)
+

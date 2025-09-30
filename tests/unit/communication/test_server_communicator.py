@@ -248,3 +248,4 @@ class TestServerCommunicator:
         for method, args in methods_to_test:
             result = method(*args)
             assert result == {}
+

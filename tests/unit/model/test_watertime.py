@@ -60,3 +60,4 @@ class TestWaterTime:
         
         assert water_time.weekday == "Wednesday"
         assert water_time.time_water == "16:30"
+
